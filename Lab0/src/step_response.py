@@ -26,11 +26,7 @@ def toggler(which_timer):
         down_time = utime.ticks_us()
 
 def step_response():
-    # make a list for time and voltage, CSV
-    # start a clock when the input is initialized
-    # measure voltage, record time simultaneously
-    # repeat every 10ms until voltage ~= 3.3V
-    # print end
+
     timmy.callback(toggler)
     global duration
     duration = abs(utime.ticks_diff(down_time, up_time) * 2 / 1000)
