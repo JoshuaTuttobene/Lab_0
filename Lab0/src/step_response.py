@@ -1,16 +1,15 @@
 
 """!
 @file step_response.py
-This file contains code which computes the answer to the question of 
-Life, the Universe, and Everything. Hopefully it can be done in fewer
-than 100,000 years.
+This file contains code which measures the time response of the output pin voltage in response
+to a change from 0-3.3V at the input pin and prints the voltage data along with its
+corresponding time in ms.
 
-TODO: Create a function which explains what the question actually means.
-      This might take a bit longer. 
+TODO: Lab 0 Week 2 additions 
 
 @author Aaron Escamilla, Karen Morales De Leon, Joshua Tuttobene
-@date   1-16-2258 SPL Original file
-@copyright (c) 2258 by Nobody and released under GNU Public License v3
+@date   1-16-2024 SPL Original file
+@copyright (c) 2024 by Nobody and released under GNU Public License v3
 """
 
 import micropython
@@ -63,7 +62,8 @@ step_response()
 for Queue_Size in range(500):
     print(f"{time}, {(3.3/4096)*volts.get()}")
     time = time + 10
-    
+if volts.any() == False:
+    print("end")
     """!
     step_response serves to initialize the input from pin C0
     This is done only when the there is space for the queue to be filled
