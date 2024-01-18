@@ -38,10 +38,6 @@ time = 0
 # adc_conversion = []
 
 def timer_interrupt(timer_data):
-    output_voltage = volts.put(adcB0.read())     # Reads and puts the data in queue from output (B0)
-    if volts.full():                             # Once full, the interrupt no longer runs
-        timer_input.callback(None)
-        print(volts.any())
     """!
     timer_interrupt serves to measure the output from pin B0
     Once the queue is full, the callback function stops
@@ -49,8 +45,18 @@ def timer_interrupt(timer_data):
     @return a queue full of the voltage readings of the first order step response
     """
 
-def step_response():
+    output_voltage = volts.put(adcB0.read())     # Reads and puts the data in queue from output (B0)
+    if volts.full():                             # Once full, the interrupt no longer runs
+        timer_input.callback(None)
+        print(volts.any())
     
+def step_response():
+    """!
+    step_response serves to initialize the input from pin C0
+    This is done only when the there is space for the queue to be filled
+    @param   a timer at a 200Hz to collect data
+    @return a queue full of the converted voltage from the readings of the first order step response
+    """
     timer_input.callback(timer_interrupt)       # Calls interrupt
     pinC0.high()
     while not volts.full():
@@ -64,13 +70,7 @@ for Queue_Size in range(500):
     time = time + 10
 if volts.any() == False:
     print("end")
-    """!
-    step_response serves to initialize the input from pin C0
-    This is done only when the there is space for the queue to be filled
-    @param   a timer at a 200Hz to collect data
-    @return a queue full of the converted voltage from the readings of the first order step response
-    """
-    
+        
 
 
 
