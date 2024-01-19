@@ -30,23 +30,20 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
 # Plot with Maplotlib
 
 # Creating serial
-print('serial')
-ser = serial.Serial('COM5')
-ser.baudrate = 9600
+ser = serial.Serial('COM3')
+ser.baudrate = 115200
 ser.bytsize = 8
 ser.parity = 'N'
 ser.stopbits = 1
-ser.timeout = None
-time.sleep(2)
+ser.timeout = 8
+ser.write(b'\x04')
 
 
-print('here')
 
 volts = ser.readlines()
 
 print(volts)
 
-print('hello')
 
 def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
     """!

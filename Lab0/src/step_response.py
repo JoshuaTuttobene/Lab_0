@@ -48,7 +48,6 @@ def timer_interrupt(timer_data):
     output_voltage = volts.put(adcB0.read())     # Reads and puts the data in queue from output (B0)
     if volts.full():                             # Once full, the interrupt no longer runs
         timer_input.callback(None)
-        print(volts.any())
     
 def step_response():
     """!
