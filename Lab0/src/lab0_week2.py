@@ -17,11 +17,36 @@ import math
 import time
 import tkinter
 from random import random
-from serial import Serial
+import serial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
+# Steps:
+# Run step_response and upload to microcontroller
+# Pull data from microcontroller to USB
+# Read data from USB with serial
+# Convert from arrays to floating point numbers (HW0)
+# Put into lists
+# Plot with Maplotlib
 
+# Creating serial
+print('serial')
+ser = serial.Serial('COM5')
+ser.baudrate = 9600
+ser.bytsize = 8
+ser.parity = 'N'
+ser.stopbits = 1
+ser.timeout = None
+time.sleep(2)
+
+
+print('here')
+
+volts = ser.readlines()
+
+print(volts)
+
+print('hello')
 
 def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
     """!
