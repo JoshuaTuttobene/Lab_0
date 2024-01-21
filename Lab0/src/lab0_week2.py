@@ -30,46 +30,61 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
 # Plot with Maplotlib
 
 # Creating serial
-ser = serial.Serial('COM3')
+ser = serial.Serial('COM5')
 ser.baudrate = 115200
 ser.bytsize = 8
 ser.parity = 'N'
 ser.stopbits = 1
 ser.timeout = 8
-ser.write(b'\x04')
+# ser.write(b'\x04') #sends CTRL-D to serial port, rebooting it, sending data
 
+x_data = []
+y_data = []
+print('lines')
 
-
-volts = ser.readlines()
-
-print(volts)
 
 
 def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
-    """!
-    Make an example plot to show a simple(ish) way to embed a plot into a GUI.
-    The data is just a nonsense simulation of a diving board from which a
-    typically energetic otter has just jumped.
-    @param plot_axes The plot axes supplied by Matplotlib
-    @param plot_canvas The plot canvas, also supplied by Matplotlib
-    @param xlabel The label for the plot's horizontal axis
-    @param ylabel The label for the plot's vertical axis
-    """
-    # Here we create some fake data. It is put into an X-axis list (times) and
-    # a Y-axis list (boing). Real test data will be read through the USB-serial
-    # port and processed to make two lists like these
-    times = [t / 7 for t in range(200)]
-    rando = random() * 2 * math.pi - math.pi
-    boing = [-math.sin(t + rando) * math.exp(-(t + rando) / 11) for t in times]
+     """!
+     Make an example plot to show a simple(ish) way to embed a plot into a GUI.
+     The data is just a nonsense simulation of a diving board from which a
+     typically energetic otter has just jumped.
+     @param plot_axes The plot axes supplied by Matplotlib
+     @param plot_canvas The plot canvas, also supplied by Matplotlib
+     @param xlabel The label for the plot's horizontal axis
+     @param ylabel The label for the plot's vertical axis
+     """
+     ser.write(b'\x04') #sends CTRL-D to serial port, rebooting it, sending data
+     
+     # Here we create some fake data. It is put into an X-axis list (times) and
+     # a Y-axis list (boing). Real test data will be read through the USB-serial
+     # port and processed to make two lists like these
+     for line in range(504):
+        try:
+            volts = ser.readline().decode('utf-8')
+            volts = volts.split(',')
+            x = float(''.join(volts[0:1]))
+            y = float(''.join(volts[1:2]))
+            # Append data by adding to end in array
+            x_data.append(x)
+            y_data.append(y)
+            #volts = volts.split(',')
+            #print('done')
+        except ValueError:
+            print('invalid entry')
+            pass
+    
+# print(x_data)
+# print(y_data)
 
-    # Draw the plot. Of course, the axes must be labeled. A grid is optional
-    plot_axes.plot(times, boing)
-    plot_axes.set_xlabel(xlabel)
-    plot_axes.set_ylabel(ylabel)
-    plot_axes.grid(True)
-    plot_canvas.draw()
-
-
+     # Draw the plot. Of course, the axes must be labeled. A grid is optional
+     plot_axes.plot(x_data,y_data,'.')
+     plot_axes.set_xlabel('Time (ms)')
+     plot_axes.set_ylabel('Voltage (V)')
+     plot_axes.grid(True)
+     plot_canvas.draw()
+ 
+ 
 def tk_matplot(plot_function, xlabel, ylabel, title):
     """!
     Create a TK window with one embedded Matplotlib plot.
@@ -123,6 +138,6 @@ def tk_matplot(plot_function, xlabel, ylabel, title):
 if __name__ == "__main__":
     tk_matplot(plot_example,
                xlabel="Time (ms)",
-               ylabel="Boing (cm)",
-               title="Otterly Silly")
+               ylabel="Voltage (V)",
+               title="First Order Step Response")
 
