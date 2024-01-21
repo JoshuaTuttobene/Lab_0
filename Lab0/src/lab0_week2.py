@@ -21,13 +21,6 @@ import serial
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
-# Steps:
-# Run step_response and upload to microcontroller
-# Pull data from microcontroller to USB
-# Read data from USB with serial
-# Convert from arrays to floating point numbers (HW0)
-# Put into lists
-# Plot with Maplotlib
 
 # Creating serial
 ser = serial.Serial('COM5')
@@ -36,13 +29,9 @@ ser.bytsize = 8
 ser.parity = 'N'
 ser.stopbits = 1
 ser.timeout = 8
-# ser.write(b'\x04') #sends CTRL-D to serial port, rebooting it, sending data
 
 x_data = []
 y_data = []
-print('lines')
-
-
 
 def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
      """!
@@ -63,25 +52,27 @@ def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
         try:
             volts = ser.readline().decode('utf-8')
             volts = volts.split(',')
+            
             x = float(''.join(volts[0:1]))
             y = float(''.join(volts[1:2]))
+            
             # Append data by adding to end in array
             x_data.append(x)
             y_data.append(y)
-            #volts = volts.split(',')
-            #print('done')
+
         except ValueError:
             print('invalid entry')
             pass
-    
-# print(x_data)
-# print(y_data)
 
      # Draw the plot. Of course, the axes must be labeled. A grid is optional
-     plot_axes.plot(x_data,y_data,'.')
+     plot_axes.plot(x_data,y_data,'.', markersize=0.5)
      plot_axes.set_xlabel('Time (ms)')
      plot_axes.set_ylabel('Voltage (V)')
      plot_axes.grid(True)
+     
+     t = range(5000)
+     results = [3.3*(1-math.exp(-t/((100000000*3.3*10**(-6))))) for t in t] # time constant in ms
+     plot_axes.plot(t, results)
      plot_canvas.draw()
  
  
