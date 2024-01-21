@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['step_5fresponse_0',['step_response',['../step__response_8py.html#a2e58a883307d1a7d61e2d39ef44a29b6',1,'step_response']]]
+  ['plot_5fexample_0',['plot_example',['../lab0__week2_8py.html#acd8db37db22be3701106a588a59fbfb6',1,'lab0_week2']]]
 ];
