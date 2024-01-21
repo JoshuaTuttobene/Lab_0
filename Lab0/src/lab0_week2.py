@@ -1,5 +1,5 @@
 """!
-@file lab0example.py
+@file lab0_week2.py
 Run real or simulated dynamic response tests and plot the results. This program
 demonstrates a way to make a simple GUI with a plot in it. It uses Tkinter, an
 old-fashioned and ugly but useful GUI library which is included in Python by
@@ -8,8 +8,8 @@ default.
 This file is based loosely on an example found at
 https://matplotlib.org/stable/gallery/user_interfaces/embedding_in_tk_sgskip.html
 
-@author Spluttflob
-@date   2023-12-24 Original program, based on example from above listed source
+@author Aaron Escamilla, Karen Morales De Leon, Joshua Tuttobene
+@date   01/21/2024 Original program, based on example from above listed source
 @copyright (c) 2023 by Spluttflob and released under the GNU Public Licenes V3
 """
 
@@ -22,7 +22,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
 
-# Creating serial
+# Creating serial to read port
 ser = serial.Serial('COM5')
 ser.baudrate = 115200
 ser.bytsize = 8
@@ -30,24 +30,37 @@ ser.parity = 'N'
 ser.stopbits = 1
 ser.timeout = 8
 
+# Create empty arrays to append data from microcontroller
 x_data = []
 y_data = []
 
 def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
      """!
-     Make an example plot to show a simple(ish) way to embed a plot into a GUI.
-     The data is just a nonsense simulation of a diving board from which a
-     typically energetic otter has just jumped.
+     Sends CTRL-D to serial port, rebooting it, and sends data
+     
+     Here we read the data from the microcontroller, and organize it accordingly with split and float commands
+     This is read from the USB-serial
+     A try block is used to filter out unusable data
+     Time in x-axis, and Voltage in y-axis
+     
+     Theoretical data is also created to compare with the measured data
+     
+     Make a First Order Step Response plot with a GUI.
+     The data was acquired from the microcontroller with a step-response file
      @param plot_axes The plot axes supplied by Matplotlib
      @param plot_canvas The plot canvas, also supplied by Matplotlib
      @param xlabel The label for the plot's horizontal axis
      @param ylabel The label for the plot's vertical axis
      """
-     ser.write(b'\x04') #sends CTRL-D to serial port, rebooting it, sending data
      
-     # Here we create some fake data. It is put into an X-axis list (times) and
-     # a Y-axis list (boing). Real test data will be read through the USB-serial
-     # port and processed to make two lists like these
+     # Sends CTRL-D to serial port, rebooting it, and sends data
+     ser.write(b'\x04') 
+     
+     # Here we read the data from the microcontroller, and organize it accordingly with split and float commands
+     # This is read from the USB-serial
+     # A try block is used to filter out unusable data
+     # Time in x-axis, and Voltage in y-axis
+
      for line in range(504):
         try:
             volts = ser.readline().decode('utf-8')
@@ -64,15 +77,18 @@ def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
             print('invalid entry')
             pass
 
-     # Draw the plot. Of course, the axes must be labeled. A grid is optional
+     # Draw the plot from the measured data 
      plot_axes.plot(x_data,y_data,'.', markersize=0.5)
      plot_axes.set_xlabel('Time (ms)')
      plot_axes.set_ylabel('Voltage (V)')
      plot_axes.grid(True)
      
+     
+     # Theoretical data to compare against the measured data
      t = range(5000)
      results = [3.3*(1-math.exp(-t/((100000000*3.3*10**(-6))))) for t in t] # time constant in ms
      plot_axes.plot(t, results)
+     plot_axes.legend(['Measured', 'Theoretical'])
      plot_canvas.draw()
  
  
