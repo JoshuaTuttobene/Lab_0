@@ -1,1 +1,0 @@
-This code activates a circuit attached to a microcontroller and reads the voltage through the serial port. It then plots the measured and theoretical step responses when prompted by the user using matplotlib and tkinter.
